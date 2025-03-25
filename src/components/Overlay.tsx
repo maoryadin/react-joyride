@@ -63,7 +63,7 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
   }
 
   componentDidUpdate(previousProps: OverlayProps) {
-    const { disableScrollParentFix, lifecycle, spotlightClicks, target } = this.props;
+    const { disableScrollParentFix, lifecycle, target, spotlightClicks } = this.props;
     const { changed } = treeChanges(previousProps, this.props);
 
     if (changed('target') || changed('disableScrollParentFix')) {
@@ -85,10 +85,13 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     }
 
     if (changed('spotlightClicks') || changed('disableOverlay') || changed('lifecycle')) {
+      window.removeEventListener('mousemove', this.handleMouseMove);
+
+      // Reset mouseOverSpotlight state when lifecycle changes or spotlightClicks changes
+      this.updateState({ mouseOverSpotlight: false });
+
       if (spotlightClicks && lifecycle === LIFECYCLE.TOOLTIP) {
         window.addEventListener('mousemove', this.handleMouseMove, false);
-      } else if (lifecycle !== LIFECYCLE.TOOLTIP) {
-        window.removeEventListener('mousemove', this.handleMouseMove);
       }
     }
   }
