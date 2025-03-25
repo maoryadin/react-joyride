@@ -102,13 +102,24 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     clearTimeout(this.resizeTimeout);
     clearTimeout(this.scrollTimeout);
     this.scrollParent?.removeEventListener('scroll', this.handleScroll);
+
+    // Reset state when unmounting
+    this.updateState({ mouseOverSpotlight: false });
   }
 
   hideSpotlight = () => {
-    const { disableOverlay, lifecycle } = this.props;
+    const { continuous, disableOverlay, lifecycle } = this.props;
     const hiddenLifecycles = [LIFECYCLE.BEACON, LIFECYCLE.COMPLETE, LIFECYCLE.ERROR] as Lifecycle[];
 
-    return disableOverlay || hiddenLifecycles.includes(lifecycle);
+    const shouldHide =
+      disableOverlay ||
+      (continuous ? hiddenLifecycles.includes(lifecycle) : lifecycle !== LIFECYCLE.TOOLTIP);
+
+    if (shouldHide) {
+      this.updateState({ mouseOverSpotlight: false });
+    }
+
+    return shouldHide;
   };
 
   get overlayStyles() {
