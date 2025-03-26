@@ -4,6 +4,8 @@ import isEqual from '@gilbarbara/deep-equal';
 import is from 'is-lite';
 import treeChanges from 'tree-changes';
 
+import { defaultProps } from '~/defaults';
+import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
 import {
   canUseDOM,
   getElement,
@@ -16,12 +18,9 @@ import { log, shouldScroll } from '~/modules/helpers';
 import { getMergedStep, validateSteps } from '~/modules/step';
 import createStore from '~/modules/store';
 
-import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
-
 import Overlay from '~/components/Overlay';
 import Portal from '~/components/Portal';
 
-import { defaultProps } from '~/defaults';
 import { Actions, CallBackProps, Props, State, Status, StoreHelpers } from '~/types';
 
 import Step from './Step';
@@ -303,7 +302,7 @@ class Joyride extends React.Component<Props, State> {
       } else if (lifecycle === LIFECYCLE.TOOLTIP && tooltipPopper) {
         const { flipped, offsets, placement } = tooltipPopper;
 
-        if (['top', 'right', 'left'].includes(placement) && !flipped && !hasCustomScroll) {
+        if (['left', 'right', 'top'].includes(placement) && !flipped && !hasCustomScroll) {
           scrollY = Math.floor(offsets.popper.top - scrollOffset);
         } else {
           scrollY -= step.spotlightPadding;

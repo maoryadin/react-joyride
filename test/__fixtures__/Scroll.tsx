@@ -1,9 +1,9 @@
 import { useReducer, useRef } from 'react';
 
-import { scrollSteps } from './steps';
-
 import Joyride, { STATUS, StoreHelpers } from '../../src';
 import { CallBackProps, Props, Status, Step } from '../../src/types';
+
+import { scrollSteps } from './steps';
 
 interface State {
   run: boolean;

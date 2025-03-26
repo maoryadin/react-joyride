@@ -27,14 +27,14 @@ export type BaseProps = {
    */
   disableOverlayClose?: boolean;
   /**
+   * @default false
+   */
+  disableScrolling?: boolean;
+  /**
    * Disable the fix to handle "unused" overflow parents.
    * @default false
    */
   disableScrollParentFix?: boolean;
-  /**
-   * @default false
-   */
-  disableScrolling?: boolean;
   /**
    * Options to be passed to react-floater
    */

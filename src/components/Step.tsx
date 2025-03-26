@@ -3,12 +3,11 @@ import Floater, { Props as FloaterProps, RenderProps } from 'react-floater';
 import is from 'is-lite';
 import treeChanges from 'tree-changes';
 
+import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
 import { getElement, isElementVisible } from '~/modules/dom';
 import { hideBeacon, log } from '~/modules/helpers';
 import Scope from '~/modules/scope';
 import { validateStep } from '~/modules/step';
-
-import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
 
 import { StepProps } from '~/types';
 

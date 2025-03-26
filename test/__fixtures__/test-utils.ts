@@ -49,4 +49,4 @@ const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'queries'>
 export * from '@testing-library/react';
 
 // override render method
-export { customScreen as screen, customWithin as within, customRender as render };
+export { customRender as render, customScreen as screen, customWithin as within };

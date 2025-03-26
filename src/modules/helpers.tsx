@@ -138,7 +138,7 @@ export function hideBeacon(step: Step): boolean {
  * @returns {boolean}
  */
 export function isLegacy(): boolean {
-  return !['chrome', 'safari', 'firefox', 'opera'].includes(getBrowser());
+  return !['chrome', 'firefox', 'opera', 'safari'].includes(getBrowser());
 }
 
 /**

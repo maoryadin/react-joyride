@@ -19,12 +19,12 @@ import {
 
 const baseObject = { a: 1, b: '', c: [1], d: { a: null }, e: undefined };
 
-function Skip() {
-  return <strong data-test-id="skip-label">Do you really want to skip?</strong>;
-}
-
 function NextWithProgress() {
   return <strong data-test-id="next-label">{`Go ({step} of {steps})`}</strong>;
+}
+
+function Skip() {
+  return <strong data-test-id="skip-label">Do you really want to skip?</strong>;
 }
 
 describe('helpers', () => {

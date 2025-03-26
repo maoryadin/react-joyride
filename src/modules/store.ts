@@ -7,9 +7,9 @@ import { Origin, State, Status, Step, StoreHelpers, StoreOptions } from '~/types
 
 import { hasValidKeys, objectKeys, omit } from './helpers';
 
-type StateWithContinuous = State & { continuous: boolean };
 type Listener = (state: State) => void;
 type PopperData = Parameters<NonNullable<FloaterProps['getPopper']>>[0];
+type StateWithContinuous = State & { continuous: boolean };
 
 const defaultState: State = {
   action: 'init',
@@ -21,6 +21,8 @@ const defaultState: State = {
   status: STATUS.IDLE,
 };
 const validKeys = objectKeys(omit(defaultState, 'controlled', 'size'));
+
+export type StoreInstance = ReturnType<typeof createStore>;
 
 class Store {
   private beaconPopper: PopperData | null;
@@ -79,7 +81,7 @@ class Store {
       lifecycle: state.lifecycle ?? LIFECYCLE.INIT,
       origin: state.origin ?? null,
       size: state.size ?? size,
-      status: nextIndex === size ? STATUS.FINISHED : state.status ?? status,
+      status: nextIndex === size ? STATUS.FINISHED : (state.status ?? status),
     };
   }
 
@@ -318,8 +320,6 @@ class Store {
     });
   };
 }
-
-export type StoreInstance = ReturnType<typeof createStore>;
 
 export default function createStore(options?: StoreOptions) {
   return new Store(options);

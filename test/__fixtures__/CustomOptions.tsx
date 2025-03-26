@@ -1,9 +1,9 @@
 import { useReducer } from 'react';
 
-import { standardSteps } from './steps';
-
 import Joyride, { LIFECYCLE, STATUS, Status } from '../../src';
 import { CallBackProps, Props, Step } from '../../src/types';
+
+import { standardSteps } from './steps';
 
 interface CustomOptionsProps extends Omit<Props, 'run' | 'steps'> {
   finishedCallback: () => void;
@@ -15,12 +15,12 @@ interface State {
   steps: Array<Step>;
 }
 
-function Skip() {
-  return <strong data-test-id="skip-label">Do you really want to skip?</strong>;
-}
-
 function NextWithProgress() {
   return <strong>{`Go ({step} of {steps})`}</strong>;
+}
+
+function Skip() {
+  return <strong data-test-id="skip-label">Do you really want to skip?</strong>;
 }
 
 const tourSteps: Array<Step> = [
