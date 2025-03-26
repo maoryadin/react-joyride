@@ -1,7 +1,6 @@
 # React Joyride
 
 This repo is a fork of the original repo (react-joyride)
-א
 
 [![](https://badge.fury.io/js/react-joyride.svg)](https://www.npmjs.com/package/react-joyride) [![CI](https://github.com/gilbarbara/react-joyride/actions/workflows/main.yml/badge.svg)](https://github.com/gilbarbara/react-joyride/actions/workflows/main.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gilbarbara_react-joyride&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gilbarbara_react-joyride) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=gilbarbara_react-joyride&metric=coverage)](https://sonarcloud.io/summary/new_code?id=gilbarbara_react-joyride)
 
