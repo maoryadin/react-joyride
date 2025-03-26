@@ -1,6 +1,7 @@
 import * as React from 'react';
 import treeChanges from 'tree-changes';
 
+import { LIFECYCLE } from '~/literals';
 import {
   getClientRect,
   getDocumentHeight,
@@ -12,17 +13,9 @@ import {
 } from '~/modules/dom';
 import { getBrowser, isLegacy, log } from '~/modules/helpers';
 
-import { LIFECYCLE } from '~/literals';
-
 import { Lifecycle, OverlayProps } from '~/types';
 
 import Spotlight from './Spotlight';
-
-interface State {
-  isScrolling: boolean;
-  mouseOverSpotlight: boolean;
-  showSpotlight: boolean;
-}
 
 interface SpotlightStyles extends React.CSSProperties {
   height: number;
@@ -31,11 +24,18 @@ interface SpotlightStyles extends React.CSSProperties {
   width: number;
 }
 
+interface State {
+  isScrolling: boolean;
+  mouseOverSpotlight: boolean;
+  showSpotlight: boolean;
+}
+
 export default class JoyrideOverlay extends React.Component<OverlayProps, State> {
   isActive = false;
   resizeTimeout?: number;
   scrollTimeout?: number;
   scrollParent?: Document | Element;
+  documentHeight = 0;
   state = {
     isScrolling: false,
     mouseOverSpotlight: false,
@@ -43,11 +43,19 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
   };
 
   componentDidMount() {
-    const { debug, disableScrolling, disableScrollParentFix = false, target } = this.props;
+    const {
+      debug,
+      disableScrolling,
+      disableScrollParentFix = false,
+      lifecycle,
+      spotlightClicks,
+      target,
+    } = this.props;
     const element = getElement(target);
 
     this.scrollParent = getScrollParent(element ?? document.body, disableScrollParentFix, true);
     this.isActive = true;
+    this.documentHeight = getDocumentHeight();
 
     if (process.env.NODE_ENV !== 'production') {
       if (!disableScrolling && hasCustomScrollParent(element, true)) {
@@ -60,6 +68,10 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     }
 
     window.addEventListener('resize', this.handleResize);
+
+    if (spotlightClicks && lifecycle === LIFECYCLE.TOOLTIP) {
+      window.addEventListener('mousemove', this.handleMouseMove, false);
+    }
   }
 
   componentDidUpdate(previousProps: OverlayProps) {
@@ -79,10 +91,13 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     }
 
     if (changed('spotlightClicks') || changed('disableOverlay') || changed('lifecycle')) {
+      window.removeEventListener('mousemove', this.handleMouseMove);
+
+      // Reset mouseOverSpotlight state when lifecycle changes or spotlightClicks changes
+      this.updateState({ mouseOverSpotlight: false });
+
       if (spotlightClicks && lifecycle === LIFECYCLE.TOOLTIP) {
         window.addEventListener('mousemove', this.handleMouseMove, false);
-      } else if (lifecycle !== LIFECYCLE.TOOLTIP) {
-        window.removeEventListener('mousemove', this.handleMouseMove);
       }
     }
   }
@@ -96,21 +111,24 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     clearTimeout(this.resizeTimeout);
     clearTimeout(this.scrollTimeout);
     this.scrollParent?.removeEventListener('scroll', this.handleScroll);
+
+    // Reset state when unmounting
+    this.updateState({ mouseOverSpotlight: false });
   }
 
   hideSpotlight = () => {
     const { continuous, disableOverlay, lifecycle } = this.props;
-    const hiddenLifecycles = [
-      LIFECYCLE.INIT,
-      LIFECYCLE.BEACON,
-      LIFECYCLE.COMPLETE,
-      LIFECYCLE.ERROR,
-    ] as Lifecycle[];
+    const hiddenLifecycles = [LIFECYCLE.BEACON, LIFECYCLE.COMPLETE, LIFECYCLE.ERROR] as Lifecycle[];
 
-    return (
+    const shouldHide =
       disableOverlay ||
-      (continuous ? hiddenLifecycles.includes(lifecycle) : lifecycle !== LIFECYCLE.TOOLTIP)
-    );
+      (continuous ? hiddenLifecycles.includes(lifecycle) : lifecycle !== LIFECYCLE.TOOLTIP);
+
+    if (shouldHide) {
+      this.updateState({ mouseOverSpotlight: false });
+    }
+
+    return shouldHide;
   };
 
   get overlayStyles() {
@@ -125,7 +143,7 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
 
     return {
       cursor: disableOverlayClose ? 'default' : 'pointer',
-      height: getDocumentHeight(),
+      height: this.documentHeight,
       pointerEvents: mouseOverSpotlight ? 'none' : 'auto',
       ...baseStyles,
     } as React.CSSProperties;
@@ -202,6 +220,7 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
         return;
       }
 
+      this.documentHeight = getDocumentHeight();
       this.forceUpdate();
     }, 100);
   };
